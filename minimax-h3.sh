@@ -13,7 +13,8 @@ HF_MAX_PARALLEL=3
 WGET_MAX_PARALLEL=5
 MODEL_LOG="${MODEL_LOG:-/var/log/portal/comfyui.log}"
 
-# Model declarations: "URL|OUTPUT_PATH"HF_MODELS=(
+# Model declarations: "URL|OUTPUT_PATH"
+HF_MODELS=(
   "https://huggingface.co/Comfy-Org/MiniMax-H3-Image/resolve/main/diffusion_models/minimax_h3_image_pruned_int8_convrot.safetensors|$MODELS_DIR/diffusion_models/minimax_h3_image_pruned_int8_convrot.safetensors"
   "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors|$MODELS_DIR/text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors"
   "https://huggingface.co/Comfy-Org/Qwen3.5/resolve/main/text_encoders/qwen3.5_9b_w4a8_gptq.safetensors|$MODELS_DIR/text_encoders/qwen3.5_9b_w4a8_gptq.safetensors"
@@ -334,7 +335,7 @@ write_api_workflow() {
   "2": {
     "class_type": "CLIPLoader",
     "inputs": {
-      "clip_name": "qwen3vl_32b_minimax_h3_int8_convrot.safetensors",
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
       "type": "minimax",
       "device": "default"
     }
