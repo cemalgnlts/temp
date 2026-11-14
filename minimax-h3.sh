@@ -244,6 +244,22 @@ release_slot() {
     rm -f "$1"
 }
 
+update_comfyui() {
+    local ref="${COMFYUI_REF:-v0.45.0}"
+    log "Updating ComfyUI to $ref..."
+    (
+        cd "$COMFYUI_DIR"
+        git fetch origin tag "$ref" --no-tags
+        git checkout -f "$ref"
+        if command -v uv >/dev/null 2>&1; then
+            uv pip install -r requirements.txt
+        else
+            pip install -r requirements.txt
+        fi
+    ) 2>&1 | tee -a "$MODEL_LOG"
+    log "✓ ComfyUI updated to $ref"
+}
+
 main() {
     log "Starting ComfyUI provisioning..."
     
@@ -252,6 +268,8 @@ main() {
         # shellcheck source=/dev/null
         . /venv/main/bin/activate
     fi
+
+    update_comfyui
 
     # Clean up any leftover semaphores from previous runs
     rm -rf "$HF_SEMAPHORE_DIR"
