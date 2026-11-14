@@ -340,6 +340,8 @@ main() {
 # Adjustments as recommended at https://huggingface.co/Comfy-Org/ACE-Step_ComfyUI_repackaged/discussions/1#6845136255e580607333edda, converted to API format
 write_api_workflow() {
     # Define the workflow JSON once
+    local default_prompt="A red fox sitting in a snowy forest at sunrise, soft golden light, detailed fur, photorealistic"
+    local BENCH_PROMPT="A red fox in a snowy forest"
     local workflow_json
     read -r -d '' workflow_json << 'WORKFLOW_JSON' || true
 {
@@ -423,13 +425,29 @@ WORKFLOW_JSON
 }
 EOF
 
+    # Warm-up payload: same graph (so every model gets loaded), small size and a short prompt
+    local benchmark_json="$workflow_json"
+    benchmark_json="${benchmark_json//\"width\": 2048/\"width\": 1024}"
+    benchmark_json="${benchmark_json//\"height\": 2048/\"height\": 1024}"
+    benchmark_json="${benchmark_json//$default_prompt/$BENCH_PROMPT}"
+
     # Wait for directory to exist (from git clone), then write second file
-    local benchmark_dir="$WORKSPACE/vast-pyworker/workers/comfyui-json/misc"
+    local benchmark_dir="$WORKSPACE_DIR/vast-pyworker/workers/comfyui-json/misc"
     while [[ ! -d "$benchmark_dir" ]]; do
         sleep 1
     done
-    
-    echo "$workflow_json" > "$benchmark_dir/benchmark.json"
+
+    echo "$benchmark_json" > "$benchmark_dir/benchmark.json"
+
+    # The SDK default is 1 warm-up + 8 measured runs. One run is enough to load the models,
+    # so patch the worker before it starts (it is launched only after its dependencies install).
+    local worker_py="$benchmark_dir/../worker.py"
+    while [[ ! -f "$worker_py" ]]; do
+        sleep 1
+    done
+    if ! grep -q 'runs=1, do_warmup=False' "$worker_py"; then
+        sed -i 's/generator=make_benchmark_payload,/generator=make_benchmark_payload, runs=1, do_warmup=False,/' "$worker_py"
+    fi
 }
 
 # Add a cron job to remove older (oldest +24 hours) output files if disk space is low
