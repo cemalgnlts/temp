@@ -1,4 +1,4 @@
-FROM runpod/worker-comfyui:5.11.0-base
+FROM runpod/worker-comfyui:5.10.0-base
 
 # H3 node'ları için ComfyUI 0.45, quant çekirdekleri için CUDA 13 torch
 RUN cd /comfyui \
