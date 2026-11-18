@@ -21,5 +21,8 @@ RUN python -c "import torch; v=torch.version.cuda; print(torch.__version__, v); 
  && cd /comfyui && timeout 300 python main.py --quick-test-for-ci --cpu
 
 COPY link_cached_models.sh /link_cached_models.sh
+COPY save_s4.py /comfyui/custom_nodes/save_s4.py
+
 RUN chmod +x /link_cached_models.sh
+
 CMD ["/bin/bash", "-c", "/link_cached_models.sh; exec /start.sh"]
