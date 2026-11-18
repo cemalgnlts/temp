@@ -19,3 +19,7 @@ RUN uv pip install --python /opt/venv/bin/python \
 # Setup verify
 RUN python -c "import torch; v=torch.version.cuda; print(torch.__version__, v); assert v.startswith('13'), v" \
  && cd /comfyui && timeout 300 python main.py --quick-test-for-ci --cpu
+
+COPY link_cached_models.sh /link_cached_models.sh
+RUN chmod +x /link_cached_models.sh
+CMD ["/bin/bash", "-c", "/link_cached_models.sh; exec /start.sh"]
