@@ -22,6 +22,7 @@ RUN python -c "import torch; v=torch.version.cuda; print(torch.__version__, v); 
 
 COPY link_cached_models.sh /link_cached_models.sh
 COPY save_s4.py /comfyui/custom_nodes/save_s4.py
+COPY save_jpeg.py /comfyui/custom_nodes/save_jpeg.py
 
 RUN chmod +x /link_cached_models.sh
 
