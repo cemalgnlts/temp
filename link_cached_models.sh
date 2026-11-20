@@ -9,7 +9,7 @@ if [[ -z "$SNAP" ]]; then
   echo "[cache] missing model cache: $NAME"; exit 0
 fi
 
-for d in diffusion_models text_encoders vae; do
+for d in diffusion_models text_encoders vae latent_upscale_models loras; do
   mkdir -p "/comfyui/models/$d"
   ln -sf "$SNAP$d"/*.safetensors "/comfyui/models/$d/"
 done
