@@ -23,10 +23,12 @@ RUN python -c "import torch; v=torch.version.cuda; print(torch.__version__, v); 
 COPY link_cached_models.sh /link_cached_models.sh
 COPY save_s4.py /comfyui/custom_nodes/save_s4.py
 COPY save_jpeg.py /comfyui/custom_nodes/save_jpeg.py
+COPY patch_handler.py /tmp/patch_handler.py
 
 RUN sed -i 's|--disable-auto-launch|--disable-auto-launch ${COMFY_EXTRA_ARGS}|' /start.sh \
  && grep -q 'COMFY_EXTRA_ARGS' /start.sh
 
 RUN chmod +x /link_cached_models.sh
+RUN python /tmp/patch_handler.py /handler.py
 
 CMD ["/bin/bash", "-c", "/link_cached_models.sh; exec /start.sh"]
